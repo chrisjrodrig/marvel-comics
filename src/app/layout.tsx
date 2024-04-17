@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { NavigationBottom } from "@/components/NavigationBottom";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -20,11 +21,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased bg-black",
           fontSans.variable
         )}
       >
         {children}
+        <div className="absolute inset-x-1/2 bottom-0">
+          <NavigationBottom />
+        </div>
       </body>
     </html>
   );
