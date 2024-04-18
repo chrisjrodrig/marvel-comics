@@ -3,7 +3,7 @@ import ComicListItem from "@/components/ComicListItem";
 
 export default async function ComicsListPage() {
   const allComics = await getAllComics();
-
+console.log(allComics.data.results[0]);
   return (
     <div>
       <h1>Comics List Page</h1>
@@ -16,6 +16,7 @@ export default async function ComicsListPage() {
             title={comic.title}
             format={comic.format}
             series={comic.series}
+            dates={comic.dates}
           />
         ))}
       </div>

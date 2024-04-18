@@ -1,9 +1,11 @@
+import { CardContent, Card } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
 const ComicListItem = ({
   id,
   image,
   title,
-  format,
   series,
+  dates,
 }: {
   id: number;
   image: string;
@@ -12,33 +14,32 @@ const ComicListItem = ({
   series: {
     name: string;
   };
+  dates: { type: string; date: string }[];
 }) => {
   return (
-    <div key={id} className="relative group overflow-hidden rounded-lg">
+    <Card className="w-full max-w-md" key={id}>
       <a href={`/comics/${id}`}>
         <img
           alt={title}
-          className="object-cover w-full h-60"
-          height={500}
+          className="aspect-[2/1] rounded-t-lg object-cover"
+          height="200"
           src={image}
-          style={{
-            aspectRatio: "400/500",
-            objectFit: "cover",
-          }}
-          width={400}
+          width="400"
         />
       </a>
-      <div className="bg-white p-4 dark:bg-gray-950">
-        <h3 className="font-semibold text-lg md:text-xl">{title}</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{format}</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {series.name}
-        </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          <a href={`/comics/${id}`}>View</a>
-        </p>
-      </div>
-    </div>
+      <CardContent className="p-4 space-y-2">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <p className="text-gray-500 dark:text-gray-400">
+            {formatDate(dates[0].date)}
+          </p>
+          <p className="text-gray-500 dark:text-gray-400">{series.name}</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            <a href={`/comics/${id}`}>View</a>
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

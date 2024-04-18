@@ -26,9 +26,8 @@ export default function RootLayout({
         )}
       >
         {children}
-        <div className="absolute inset-x-1/2 bottom-0">
-          <NavigationBottom />
-        </div>
+
+        <NavigationBottom />
       </body>
     </html>
   );
