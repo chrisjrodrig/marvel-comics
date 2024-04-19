@@ -32,17 +32,29 @@ async function getAllComics() {
     return { data: { results: [] } };
   }
 }
-
-async function getComicById(comicId: string) {
+async function getAllCharacters() {
   const { apiKey, timestamp } = config;
   const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/comics/${comicId}?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
+  const url = `https://gateway.marvel.com/v1/public/characters?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
   const response = await fetch(url, {
     method: "GET",
   });
   return response.json();
 }
 
+async function getCharacterFirstThumbnail(characterName: string) {
+  const { apiKey, timestamp } = config;
+  const marvelHash = config.generateHash();
+  const url = `https://gateway.marvel.com/v1/public/characters?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}&name=${characterName}`;
+  const response = await fetch(url, {
+    method: "GET",
+  });
+  const data = await response.json();
+  const firstCharacter = data.data.results[0];
+  return (
+    firstCharacter.thumbnail.path + "." + firstCharacter.thumbnail.extension
+  );
+}
 async function getAllSeries() {
   const { apiKey, timestamp } = config;
   const marvelHash = config.generateHash();
@@ -53,6 +65,15 @@ async function getAllSeries() {
   return response.json();
 }
 
+async function getComicById(comicId: string) {
+  const { apiKey, timestamp } = config;
+  const marvelHash = config.generateHash();
+  const url = `https://gateway.marvel.com/v1/public/comics/${comicId}?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
+  const response = await fetch(url, {
+    method: "GET",
+  });
+  return response.json();
+}
 async function getSeriesStories(seriesId: string) {
   const { apiKey, timestamp } = config;
   const marvelHash = config.generateHash();
@@ -85,5 +106,12 @@ export const createURL = (
   return `${pathname}${queryString}`;
 };
 
-
-export { getAllComics, getComicById, getAllSeries, getSeriesStories, config };
+export {
+  getAllComics,
+  getAllCharacters,
+  getCharacterFirstThumbnail,
+  getComicById,
+  getAllSeries,
+  getSeriesStories,
+  config,
+};
