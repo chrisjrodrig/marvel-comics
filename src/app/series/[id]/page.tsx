@@ -1,5 +1,6 @@
 import ComicListItem from "@/components/ComicListItem";
 import { getSeriesStories, titleCase, getComicById, config } from "@/lib/utils";
+import Image from "next/image";
 
 export default async function SeriesStoriesPage({
   params,
@@ -59,7 +60,7 @@ export default async function SeriesStoriesPage({
       const res = await fetch(url.toString());
       const comicDetails = await res.json();
       const allIds = comicDetails.data.results.map(
-        (result: { id: string }) => result.id
+        (result: { id: string }) => result.id,
       );
       for (const id of allIds) {
         const comicDetail = await getComicById(id);
@@ -78,7 +79,12 @@ export default async function SeriesStoriesPage({
       <p>End Year: {endYear}</p>
       <p>Rating: {rating}</p>
       <p>Type: {titleCase(type)}</p>
-      <img src={thumbnail.path + "." + thumbnail.extension} alt={title} />
+      <Image
+        src={thumbnail.path + "." + thumbnail.extension}
+        alt={title}
+        width={200}
+        height={200}
+      />
       <p>Comics: {comics.available}</p>
       {comicDetailsArray &&
         comicDetailsArray.map((comic) => (
@@ -93,6 +99,7 @@ export default async function SeriesStoriesPage({
             title={comic?.data?.results[0]?.title}
             format={comic?.data?.results[0]?.format}
             series={comic?.data?.results[0]?.series}
+            dates={comic?.data?.results[0]?.created_at}
           />
         ))}
     </div>

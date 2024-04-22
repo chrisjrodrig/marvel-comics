@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Md5 } from "ts-md5";
 import { ReadonlyURLSearchParams } from "next/navigation";
+
 const { MARVEL_PRIVATE_KEY: privateKey, MARVEL_PUBLIC_KEY: apiKey } =
   process.env;
 const timestamp = new Date().getTime().toString();
@@ -10,78 +11,78 @@ const config = {
   apiKey,
   timestamp,
   generateHash: () => {
-    const marvelHash = Md5.hashAsciiStr(timestamp + privateKey + apiKey);
-    return marvelHash;
+    return Md5.hashAsciiStr(timestamp + privateKey + apiKey);
   },
 };
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+const generateHash = () => Md5.hashAsciiStr(timestamp + privateKey + apiKey);
 
-async function getAllComics() {
-  const { apiKey, timestamp } = config;
-  const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/comics?format=digital%20comic&formatType=comic&noVariants=true&hasDigitalIssue=true&orderBy=-onsaleDate&ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
+const generateMarvelAPIUrl = (endpoint: string, queryParams: any = {}) => {
+  const queryString = new URLSearchParams({
+    ...queryParams,
+    ts: timestamp,
+    apikey: apiKey,
+    hash: generateHash(),
+  });
+  return `https://gateway.marvel.com/v1/public/${endpoint}?${queryString}`;
+};
+const fetchData = async (url: string) => {
   try {
     const response = await fetch(url, {
       method: "GET",
     });
     return response.json();
   } catch (error) {
-    console.error("Error fetching all comics:", error);
+    console.error(`Error fetching data from ${url} :`, error);
     return { data: { results: [] } };
   }
+};
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+async function getFirstThumbnail(endpoint: string, params = {}) {
+  const url = generateMarvelAPIUrl(endpoint, params);
+  const response = await fetch(url, { method: "GET" });
+  const data = await response.json();
+  const firstResult = data.data.results[0];
+  return firstResult.thumbnail.path + "." + firstResult.thumbnail.extension;
+}
+
+async function getAllComics() {
+  const url = generateMarvelAPIUrl("comics", {
+    format: "digital comic",
+    formatType: "comic",
+    noVariants: true,
+    hasDigitalIssue: true,
+    orderBy: "-onsaleDate",
+  });
+  return fetchData(url);
 }
 async function getAllCharacters() {
-  const { apiKey, timestamp } = config;
-  const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/characters?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
-  const response = await fetch(url, {
-    method: "GET",
-  });
-  return response.json();
+  const url = generateMarvelAPIUrl("characters", {});
+  return fetchData(url);
 }
 
 async function getCharacterFirstThumbnail(characterName: string) {
-  const { apiKey, timestamp } = config;
-  const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/characters?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}&name=${characterName}`;
-  const response = await fetch(url, {
-    method: "GET",
-  });
-  const data = await response.json();
-  const firstCharacter = data.data.results[0];
-  return (
-    firstCharacter.thumbnail.path + "." + firstCharacter.thumbnail.extension
-  );
+  return getFirstThumbnail("characters", { name: characterName });
 }
+
+async function getComicsFirstThumbnail(comicId: number) {
+  return getFirstThumbnail(`comics/${comicId}`);
+}
+
 async function getAllSeries() {
-  const { apiKey, timestamp } = config;
-  const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/series?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
-  const response = await fetch(url, {
-    method: "GET",
-  });
-  return response.json();
+  const url = generateMarvelAPIUrl("series", {});
+  return fetchData(url);
 }
 
 async function getComicById(comicId: string) {
-  const { apiKey, timestamp } = config;
-  const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/comics/${comicId}?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
-  const response = await fetch(url, {
-    method: "GET",
-  });
-  return response.json();
+  const url = generateMarvelAPIUrl(`comics/${comicId}`, {});
+  return fetchData(url);
 }
 async function getSeriesStories(seriesId: string) {
-  const { apiKey, timestamp } = config;
-  const marvelHash = config.generateHash();
-  const url = `https://gateway.marvel.com/v1/public/series/${seriesId}?ts=${timestamp}&apikey=${apiKey}&hash=${marvelHash}`;
-  const response = await fetch(url, {
-    method: "GET",
-  });
-  return response.json();
+  const url = generateMarvelAPIUrl(`series/${seriesId}`, {});
+  return fetchData(url);
 }
 
 export const titleCase = (str: string) =>
@@ -99,7 +100,7 @@ export const formatDate = (dateString: string): string => {
 
 export const createURL = (
   pathname: string,
-  params: URLSearchParams | ReadonlyURLSearchParams
+  params: URLSearchParams | ReadonlyURLSearchParams,
 ) => {
   const paramsString = params.toString();
   const queryString = `${paramsString.length ? "?" : ""}${paramsString}`;
@@ -110,6 +111,8 @@ export {
   getAllComics,
   getAllCharacters,
   getCharacterFirstThumbnail,
+  getComicsFirstThumbnail,
+  // getSeriesFirstThumbnail,
   getComicById,
   getAllSeries,
   getSeriesStories,
