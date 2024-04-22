@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { NavigationBottom } from "@/components/NavigationBottom";
+import React from "react";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -22,7 +23,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased bg-black",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         {children}

@@ -1,5 +1,6 @@
 import { CardContent, Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
+import Image from "next/image";
 const ComicListItem = ({
   id,
   image,
@@ -19,7 +20,7 @@ const ComicListItem = ({
   return (
     <Card className="w-full max-w-md" key={id}>
       <a href={`/comics/${id}`}>
-        <img
+        <Image
           alt={title}
           className="aspect-[2/1] rounded-t-lg object-cover"
           height="200"
