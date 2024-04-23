@@ -1,25 +1,15 @@
 import { CardContent, Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import Image from "next/image";
-const ComicListItem = ({
-  id,
-  image,
-  title,
-  series,
-  dates,
-}: {
-  id: number;
-  image: string;
-  title: string;
-  format: string;
-  series: {
-    name: string;
-  };
-  dates: { type: string; date: string }[];
-}) => {
+import { ComicProps } from "@/lib/types";
+
+const ComicListItem = ({ id, image, title, series, dates }: ComicProps) => {
+  const date: string = dates[0].date;
+  const seriesName: string = series.name;
+  const comicPath: string = `/comics/${id}`;
   return (
     <Card className="w-full max-w-md" key={id}>
-      <a href={`/comics/${id}`}>
+      <a href={comicPath}>
         <Image
           alt={title}
           className="aspect-[2/1] rounded-t-lg object-cover"
@@ -31,12 +21,10 @@ const ComicListItem = ({
       <CardContent className="p-4 space-y-2">
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">{title}</h3>
+          <p className="text-gray-500 dark:text-gray-400">{formatDate(date)}</p>
+          <p className="text-gray-500 dark:text-gray-400">{seriesName}</p>
           <p className="text-gray-500 dark:text-gray-400">
-            {formatDate(dates[0].date)}
-          </p>
-          <p className="text-gray-500 dark:text-gray-400">{series.name}</p>
-          <p className="text-gray-500 dark:text-gray-400">
-            <a href={`/comics/${id}`}>View</a>
+            <a href={comicPath}>View</a>
           </p>
         </div>
       </CardContent>

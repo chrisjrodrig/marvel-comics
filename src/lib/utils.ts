@@ -58,6 +58,17 @@ async function getAllComics() {
   });
   return fetchData(url);
 }
+async function getFirstFiveComics() {
+  const url = generateMarvelAPIUrl("comics", {
+    format: "digital comic",
+    formatType: "comic",
+    noVariants: true,
+    hasDigitalIssue: true,
+    orderBy: "-onsaleDate",
+    limit: 5,
+  });
+  return fetchData(url);
+}
 async function getAllCharacters() {
   const url = generateMarvelAPIUrl("characters", {});
   return fetchData(url);
@@ -112,7 +123,7 @@ export {
   getAllCharacters,
   getCharacterFirstThumbnail,
   getComicsFirstThumbnail,
-  // getSeriesFirstThumbnail,
+  getFirstFiveComics,
   getComicById,
   getAllSeries,
   getSeriesStories,

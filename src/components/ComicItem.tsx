@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const ComicItem = ({
   id,
   images,
@@ -33,7 +35,7 @@ const ComicItem = ({
   return (
     <div key={id} className="flex flex-row">
       <div className="basis-1/2">
-        <img
+        <Image
           className="h-90 object-cover w-full"
           src={images?.path + "." + images?.extension}
           alt={title}

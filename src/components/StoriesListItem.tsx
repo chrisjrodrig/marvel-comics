@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const StoriesListItem = ({
   id,
   image,
@@ -16,7 +18,7 @@ const StoriesListItem = ({
   return (
     <div key={id} className="relative group overflow-hidden rounded-lg">
       <a href={`/comics/${id}`}>
-        <img
+        <Image
           alt={title}
           className="object-cover w-full h-60"
           height={500}
