@@ -18,7 +18,7 @@ const ComicCard: React.FC<ComicCardProps> = ({ id, imageUrl }) => (
     <div className="p-1">
       <Card>
         <CardContent className="flex aspect-square items-center justify-center p-6">
-          <img src={imageUrl} alt={`Comic ${id}`} />
+          <Image src={imageUrl} alt={`Comic ${id}`} />
         </CardContent>
       </Card>
     </div>
